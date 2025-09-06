@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School OS - Offline School Management System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-spinner"></div>
+        <h2>Loading School OS...</h2>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-screen hidden">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>🏫 School OS</h1>
+                <p>Offline School Management System</p>
+            </div>
+            
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="username">Username or Email</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Login</button>
+                
+                <div id="login-error" class="error-message hidden"></div>
+            </form>
+            
+            <div class="login-footer">
+                <p>Default Login: admin / admin</p>
+                <p><small>Change default credentials immediately after first login</small></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="main-app" class="main-app hidden">
+        <!-- Navigation Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1>🏫 School OS</h1>
+                <span id="current-user" class="user-info"></span>
+            </div>
+            
+            <div class="header-right">
+                <button id="sync-btn" class="btn btn-secondary" title="Sync Data">
+                    📊 Sync
+                </button>
+                <button id="profile-btn" class="btn btn-secondary">
+                    👤 Profile
+                </button>
+                <button id="logout-btn" class="btn btn-danger">
+                    🚪 Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <ul class="nav-menu">
+                <li><a href="#dashboard" class="nav-link active" data-section="dashboard">
+                    📊 Dashboard
+                </a></li>
+                <li><a href="#students" class="nav-link" data-section="students">
+                    👥 Students
+                </a></li>
+                <li><a href="#attendance" class="nav-link" data-section="attendance">
+                    ✅ Attendance
+                </a></li>
+                <li><a href="#grades" class="nav-link" data-section="grades">
+                    📝 Grades
+                </a></li>
+                <li><a href="#reports" class="nav-link" data-section="reports">
+                    📄 Reports
+                </a></li>
+                <li><a href="#classes" class="nav-link" data-section="classes">
+                    🏛️ Classes
+                </a></li>
+                <li><a href="#settings" class="nav-link" data-section="settings">
+                    ⚙️ Settings
+                </a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active">
+                <div class="section-header">
+                    <h2>📊 Dashboard</h2>
+                    <p>Overview of your school management system</p>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>👥 Total Students</h3>
+                        <div class="dashboard-number" id="total-students">-</div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3>✅ Today's Attendance</h3>
+                        <div class="dashboard-number" id="today-attendance">-</div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3>🏛️ Active Classes</h3>
+                        <div class="dashboard-number" id="active-classes">-</div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3>📝 Recent Grades</h3>
+                        <div class="dashboard-number" id="recent-grades">-</div>
+                    </div>
+                </div>
+                
+                <div class="recent-activity">
+                    <h3>Recent Activity</h3>
+                    <div id="recent-activity-list" class="activity-list">
+                        <p>Loading recent activity...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Students Section -->
+            <section id="students-section" class="content-section">
+                <div class="section-header">
+                    <h2>👥 Students</h2>
+                    <div class="section-actions">
+                        <button id="add-student-btn" class="btn btn-primary">➕ Add Student</button>
+                        <button id="import-students-btn" class="btn btn-secondary">📥 Import</button>
+                        <button id="export-students-btn" class="btn btn-secondary">📤 Export</button>
+                    </div>
+                </div>
+                
+                <div class="filters">
+                    <input type="text" id="student-search" placeholder="Search students..." class="search-input">
+                    <select id="class-filter" class="filter-select">
+                        <option value="">All Classes</option>
+                    </select>
+                    <select id="status-filter" class="filter-select">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="all">All Status</option>
+                    </select>
+                </div>
+                
+                <div id="students-table-container" class="table-container">
+                    <table id="students-table" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Class</th>
+                                <th>Parent</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students-table-body">
+                            <tr>
+                                <td colspan="6" class="loading-cell">Loading students...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Other sections will be loaded dynamically -->
+            <section id="attendance-section" class="content-section">
+                <div class="section-header">
+                    <div>
+                        <h2>✅ Attendance</h2>
+                        <p>Track daily student attendance</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" id="mark-all-present-btn">Mark All Present</button>
+                        <button class="btn btn-primary" id="record-attendance-btn">Record Attendance</button>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <input type="date" id="attendance-date-filter" class="search-input" value="">
+                    <select id="attendance-class-filter" class="filter-select">
+                        <option value="">All Classes</option>
+                    </select>
+                    <select id="attendance-status-filter" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="present">Present</option>
+                        <option value="absent">Absent</option>
+                        <option value="late">Late</option>
+                        <option value="excused">Excused</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Student Name</th>
+                                <th>Class</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendance-table-body">
+                            <tr>
+                                <td colspan="5" class="loading-cell">Loading attendance data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="grades-section" class="content-section">
+                <div class="section-header">
+                    <div>
+                        <h2>📝 Grades</h2>
+                        <p>Manage student grades and assessments</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="btn btn-primary">Add Grade</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Subject</th>
+                                <th>Assessment</th>
+                                <th>Score</th>
+                                <th>Grade</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="6" class="empty-cell">No grades recorded yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="reports-section" class="content-section">
+                <div class="section-header">
+                    <div>
+                        <h2>📄 Reports</h2>
+                        <p>Generate and export various reports</p>
+                    </div>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Student Report</h3>
+                        <p>Generate comprehensive student reports</p>
+                        <button class="btn btn-primary">Generate</button>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Attendance Report</h3>
+                        <p>Export attendance data and statistics</p>
+                        <button class="btn btn-primary">Generate</button>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Grade Report</h3>
+                        <p>Create grade summaries and transcripts</p>
+                        <button class="btn btn-primary">Generate</button>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Custom Report</h3>
+                        <p>Build custom reports with filters</p>
+                        <button class="btn btn-primary">Create</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="classes-section" class="content-section">
+                <div class="section-header">
+                    <div>
+                        <h2>🏛️ Classes</h2>
+                        <p>Manage classes and grade levels</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="btn btn-primary">Add Class</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Class Name</th>
+                                <th>Grade Level</th>
+                                <th>Students</th>
+                                <th>Academic Year</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>JSS1A</td>
+                                <td>JSS1</td>
+                                <td>5 students</td>
+                                <td>2024-2025</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td class="actions-cell">
+                                    <button class="btn btn-sm btn-secondary">✏️</button>
+                                    <button class="btn btn-sm btn-info">👁️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>JSS1B</td>
+                                <td>JSS1</td>
+                                <td>5 students</td>
+                                <td>2024-2025</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td class="actions-cell">
+                                    <button class="btn btn-sm btn-secondary">✏️</button>
+                                    <button class="btn btn-sm btn-info">👁️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>JSS2A</td>
+                                <td>JSS2</td>
+                                <td>5 students</td>
+                                <td>2024-2025</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td class="actions-cell">
+                                    <button class="btn btn-sm btn-secondary">✏️</button>
+                                    <button class="btn btn-sm btn-info">👁️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>JSS2B</td>
+                                <td>JSS2</td>
+                                <td>5 students</td>
+                                <td>2024-2025</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td class="actions-cell">
+                                    <button class="btn btn-sm btn-secondary">✏️</button>
+                                    <button class="btn btn-sm btn-info">👁️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>JSS3A</td>
+                                <td>JSS3</td>
+                                <td>5 students</td>
+                                <td>2024-2025</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td class="actions-cell">
+                                    <button class="btn btn-sm btn-secondary">✏️</button>
+                                    <button class="btn btn-sm btn-info">👁️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>JSS3B</td>
+                                <td>JSS3</td>
+                                <td>5 students</td>
+                                <td>2024-2025</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td class="actions-cell">
+                                    <button class="btn btn-sm btn-secondary">✏️</button>
+                                    <button class="btn btn-sm btn-info">👁️</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="settings-section" class="content-section">
+                <div class="section-header">
+                    <h2>⚙️ Settings</h2>
+                    <p>Configure system settings and preferences</p>
+                </div>
+                <div class="coming-soon">
+                    <h3>Coming Soon</h3>
+                    <p>Settings functionality will be available in the next update.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal for Add/Edit Student -->
+    <div id="student-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="student-modal-title">Add New Student</h3>
+                <button class="modal-close" id="student-modal-close">&times;</button>
+            </div>
+            
+            <form id="student-form" class="modal-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="student-id">Student ID *</label>
+                        <input type="text" id="student-id" name="student_id" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="student-class">Class</label>
+                        <select id="student-class" name="class_id">
+                            <option value="">Select Class</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first-name">First Name *</label>
+                        <input type="text" id="first-name" name="first_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last-name">Last Name *</label>
+                        <input type="text" id="last-name" name="last_name" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date-of-birth">Date of Birth</label>
+                        <input type="date" id="date-of-birth" name="date_of_birth">
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" name="gender">
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="parent-name">Parent/Guardian Name</label>
+                    <input type="text" id="parent-name" name="parent_name">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="parent-phone">Parent Phone</label>
+                        <input type="tel" id="parent-phone" name="parent_phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="parent-email">Parent Email</label>
+                        <input type="email" id="parent-email" name="parent_email">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <textarea id="address" name="address" rows="3"></textarea>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-student">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="save-student">Save Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Record/Edit Attendance -->
+    <div id="attendance-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="attendance-modal-title">Record Attendance</h3>
+                <button class="modal-close" id="attendance-modal-close">&times;</button>
+            </div>
+            <form id="attendance-form" class="modal-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="attendance-student">Student</label>
+                        <select id="attendance-student" name="student_id" required>
+                            <option value="">Select Student</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="attendance-date">Date</label>
+                        <input type="date" id="attendance-date" name="date" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="attendance-status">Status</label>
+                        <select id="attendance-status" name="status" required>
+                            <option value="present">Present</option>
+                            <option value="absent">Absent</option>
+                            <option value="late">Late</option>
+                            <option value="excused">Excused</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="attendance-notes">Notes (Optional)</label>
+                    <textarea id="attendance-notes" name="notes" rows="3" placeholder="Additional notes about attendance..."></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-attendance">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="save-attendance">Save Attendance</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- JavaScript -->
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/students.js"></script>
+    <script src="js/attendance.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
